@@ -193,10 +193,9 @@ public class Controller {
         MenuItem easy = new MenuItem("EASY");
         MenuItem normal = new MenuItem("NORMAL");
         MenuItem hard = new MenuItem("HARD");
-        MenuItem back1 = new MenuItem("BACK");
-        back1.setColorBtn(Color.DARKGOLDENROD);
+
         SubMenu selectLevel = new SubMenu(
-                easy, normal, hard, back1
+                easy, normal, hard
         );
         MenuBox selectLevelMenu = new MenuBox(selectLevel);
 
@@ -231,7 +230,6 @@ public class Controller {
         ldItem.setOnMouseClicked(e -> leaderboardClicked(inRecordList));
         save.setOnMouseClicked(e -> savedClicked(text));
 
-        back1.setOnMouseClicked(e -> back(main, inRecordList));
         back.setOnMouseClicked(e -> back(main, inRecordList));
     }
 
@@ -389,7 +387,7 @@ public class Controller {
             if ((int)(level.getScore() - 0.05) == i) return false;
 
         for (int i = 0; i < scoreOfLeaders.size(); i++) {
-            if(level.getScore() > scoreOfLeaders.get(i) || (i == scoreOfLeaders.size() && i <= 5)){
+            if(level.getScore() > scoreOfLeaders.get(i)){
                 newLeader = i;
                 showSavedMenu();
                 massageNewRecord(i);
@@ -438,17 +436,6 @@ public class Controller {
         root.getChildren().add(restart);
     }
 
-    private void checkOutHero(){
-//        Circle c = hero.getShape();
-        if(hero.getShape().getTranslateX() - hero.getShape().getRadius() < 0
-                && hero.getShape().getTranslateX() + hero.getShape().getRadius() > scene.getWidth()
-                && hero.getShape().getTranslateY() - hero.getShape().getRadius() < 0
-                && hero.getShape().getTranslateY() + hero.getShape().getRadius() < scene.getHeight()) {
-            hero.getShape().setTranslateX(scene.getWidth() / 2);
-            hero.getShape().setTranslateY(scene.getHeight() / 2);
-        }
-    }
-
     private void changeBackgroundColor(Color color){
         changeBackgroundColor(color, 1.5);
     }
@@ -461,20 +448,7 @@ public class Controller {
     }
 
     private void animationOut(String s ,int font){
-        for (int i = 0; i < s.toCharArray().length; i++) {
-            char letter = s.charAt(i);
-
-            Text text = new Text(String.valueOf(letter));
-            text.setFont(javafx.scene.text.Font.font(font));
-            text.setOpacity(0);
-
-            scoreEnd.getChildren().add(text);
-
-            FadeTransition ft = new FadeTransition(Duration.seconds(0.6), text);
-            ft.setToValue(1);
-            ft.setDelay(Duration.seconds(i * 0.05));
-            ft.play();
-        }
+        animationOut(s, scoreEnd, font);
     }
 
     private void animationOut(String s, HBox hbox, int font){
@@ -499,18 +473,22 @@ public class Controller {
         scene.setOnMousePressed(e ->{
             if(!gamePlay) return;
 
-            circle.setTranslateX(e.getSceneX());
-            circle.setTranslateY(e.getSceneY());
+            updatePosition(circle, e.getSceneX(), e.getSceneY());
             circle.setCursor(Cursor.NONE);
         });
         scene.setOnMouseDragged(e ->{
             if(!gamePlay) return;
 
-            circle.setTranslateX(e.getSceneX());
-            circle.setTranslateY(e.getSceneY());
+            updatePosition(circle, e.getSceneX(), e.getSceneY());
             circle.setCursor(Cursor.NONE);
         });
         scene.setOnMouseReleased(e -> circle.setCursor(Cursor.HAND));
+    }
+
+    private void updatePosition(Circle hero, double newX, double newY) {
+
+        hero.setTranslateX(newX);
+        hero.setTranslateY(newY);
     }
 
     private void showSavedMenu(){
